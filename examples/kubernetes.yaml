@@ -1,0 +1,86 @@
+# Generic example: one gpon-exporter in namespace "monitoring". Replace the placeholders, and pin the image by digest.
+# The Secret holds the stick's SSH password. Create it out of band (kubectl create secret, sealed-secrets,
+# external-secrets ...) instead of committing a real value.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gpon-exporter
+  namespace: monitoring
+type: Opaque
+stringData:
+  password: "<the stick's SSH password>"
+---
+# The stick's public host key, e.g. from: ssh-keyscan -t rsa -p 2222 192.0.2.10
+# For a port other than 22 the entry must read [host]:port.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gpon-exporter-known-hosts
+  namespace: monitoring
+data:
+  known_hosts: |
+    [192.0.2.10]:2222 ssh-rsa <base64 host key from ssh-keyscan>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpon-exporter
+  namespace: monitoring
+  labels: { app.kubernetes.io/name: gpon-exporter }
+spec:
+  replicas: 1
+  strategy: { type: Recreate }   # never two pollers (and two SSH sessions) against the stick at once
+  selector:
+    matchLabels: { app.kubernetes.io/name: gpon-exporter }
+  template:
+    metadata:
+      labels: { app.kubernetes.io/name: gpon-exporter }
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001             # makes the mounted password readable for uid 10001
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: exporter
+          image: ghcr.io/snakebiteef2000/gpon-exporter:0.1.0   # better: ...:0.1.0@sha256:<digest>
+          env:
+            - { name: GPON_HOST, value: "192.0.2.10" }
+            - { name: GPON_PORT, value: "2222" }
+            - { name: GPON_USER, value: "root" }
+            - { name: GPON_PASSWORD_FILE, value: /etc/gpon/secret/password }
+            - { name: GPON_KNOWN_HOSTS, value: /etc/gpon/known_hosts/known_hosts }
+            - { name: GPON_INTERVAL, value: "30" }
+          ports:
+            - { name: metrics, containerPort: 9617 }
+          volumeMounts:
+            - { name: secret, mountPath: /etc/gpon/secret, readOnly: true }
+            - { name: known-hosts, mountPath: /etc/gpon/known_hosts, readOnly: true }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
+          resources:
+            requests: { cpu: 10m, memory: 32Mi }
+            limits: { memory: 64Mi }
+          readinessProbe:
+            httpGet: { path: /metrics, port: metrics }
+            periodSeconds: 30
+      volumes:
+        - name: secret
+          secret: { secretName: gpon-exporter, defaultMode: 0440 }
+        - name: known-hosts
+          configMap: { name: gpon-exporter-known-hosts }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpon-exporter
+  namespace: monitoring
+  labels: { app.kubernetes.io/name: gpon-exporter }
+spec:
+  selector: { app.kubernetes.io/name: gpon-exporter }
+  ports:
+    - { name: metrics, port: 9617, targetPort: metrics }

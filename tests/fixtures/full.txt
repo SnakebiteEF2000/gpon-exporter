@@ -1,0 +1,50 @@
+Synthetic output of one full poll, shaped like the parser expects. Every value is made up.
+Lines before the first @@ marker are ignored by the parser.
+@@status
+  los = 0
+  state = O5
+  fec = 1
+@@stats
+  dsOcts = 987654321
+  usOcts = 123456789
+  dsPkts = 1000000
+  usPkts = 500000
+  dsBcastPkts = 1200
+  usBcastPkts = 30
+  dsMcastPkts = 4500
+  usMcastPkts = 60
+  dsCrcErrPkts = 0
+  usCrcErrPkts = 0
+  dsDiscards = 7500
+  usDiscards = 2
+  dsErr = 0
+  usErr = 0
+  dsDropEvents = 7500
+  usDropEvents = 2
+@@port
+  isUp 1
+  speed 1000M
+  duplex full
+@@uptime
+86400.25 170000.50
+@@show
+Gpon SN: TEST00000001
+Software Version: V1.2.4
+Boot Version: V1.0.0
+Hardware Version: V1.0
+Vendor Id: TEST
+Mac Address: 00:00:5e:00:53:01
+Model Name: GPON-ONT-TEST
+@@loadavg
+0.15 0.10 0.05 1/48 1234
+@@cpu
+cpu  1000 20 3000 400000 50 6 70 0 0 0
+@@meminfo
+MemTotal:         120000 kB
+MemFree:           30000 kB
+MemAvailable:      60000 kB
+Buffers:            2000 kB
+Cached:            20000 kB
+SwapCached:            0 kB
+Active(anon):       1000 kB
+@@end
