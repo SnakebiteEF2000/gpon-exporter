@@ -1,5 +1,5 @@
 # python:3.13-alpine (Python 3.13.16 on Alpine 3.24.2), pinned to its multi-arch index digest
-FROM python:3.13-alpine@sha256:2d9aefe2fef018a7eb2c13064c89c71929800fd2e5dccdbf52ea5da5bb8d929a
+FROM python:3.15-alpine@sha256:2699b90f4d562a22e2dd076c82f964032f64814204bff36d271a54ba4cc2c7e2
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 RUN adduser -D -u 10001 exporter
 WORKDIR /app
