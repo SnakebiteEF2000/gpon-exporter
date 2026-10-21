@@ -1,0 +1,16 @@
+# Weekly update PRs for the pinned GitHub Actions, the Python packages and the base image.
+# paramiko stays below 5: paramiko 5.0 removed SHA-1 RSA ("ssh-rsa"), the only host key type of these sticks.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+  - package-ecosystem: pip
+    directory: /
+    schedule: { interval: weekly }
+    ignore:
+      - dependency-name: paramiko
+        versions: [">=5"]
+  - package-ecosystem: docker
+    directory: /
+    schedule: { interval: weekly }
