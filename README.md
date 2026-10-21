@@ -12,9 +12,9 @@ the stick's uptime, and the stick's own CPU, load and memory, so you can see wha
 
 - Firmware V1.2.4 on an FS GPON-SFP-ONT-MAC-I.
 - The stick runs dropbear 2019.78. It offers only `ssh-rsa` (1024 bit) and `ssh-dss` host keys and
-  `ecdh-sha2-nistp256` key exchange (no curve25519). paramiko 3.5.x negotiates this without any overrides.
+  `ecdh-sha2-nistp256` key exchange (no curve25519). paramiko 3.5 and 4.0 negotiate this without any overrides.
 - paramiko 5 removed SHA-1 RSA signatures (`ssh-rsa`) and can no longer verify this stick's host key, so
-  `requirements.txt` stays on paramiko 3.5.x on purpose.
+  `requirements.txt` stays below paramiko 5 on purpose (Dependabot is told to skip 5.x).
 - OpenSSH 8.8 and later refuse the `ssh-rsa` host key by default. To log in by hand, use
   `ssh -o HostKeyAlgorithms=+ssh-rsa root@<stick>`.
 
