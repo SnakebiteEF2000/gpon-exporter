@@ -1,2 +1,2 @@
-paramiko==3.5.1
+paramiko==4.0.0
 prometheus_client==0.26.0
