@@ -1,6 +1,6 @@
 # Official python alpine image, pinned to its multi-arch index digest (Dependabot keeps it current).
 # Keep the CI test job (.github/workflows/build.yml) on the same Python minor version.
-FROM python:3.15-alpine@sha256:20a82dbc2783112ddb91d1534603f802d222a3e63e593cd002eb2ac534e70211
+FROM python:3.15-alpine@sha256:a0f2e268f2ce8f3709611a90054ec6a8ae31f6251f5896b8648b9bb99835e30a
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 RUN adduser -D -u 10001 exporter
 WORKDIR /app
